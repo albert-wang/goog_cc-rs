@@ -1,0 +1,6 @@
+[submodule "third_party/webrtc"]
+	path = third_party/webrtc
+	url = https://webrtc.googlesource.com/src
+[submodule "third_party/abseil-cpp"]
+	path = third_party/abseil-cpp
+	url = git@github.com:abseil/abseil-cpp.git
