@@ -10,4 +10,5 @@ namespace webrtc {
 
 std::unique_ptr<GoogCcNetworkController> new_goog_cc();
 
+void update_network_availability(const std::unique_ptr<GoogCcNetworkController> &controller, NetworkAvailability msg);
 }

@@ -1,12 +1,9 @@
+use cxx::{CxxString, CxxVector};
+
 #[cxx::bridge(namespace = "webrtc")]
 mod ffi {
     struct NetworkAvailability {
         network_available: bool
-    }
-
-    #[derive(Debug)]
-    struct NetworkControlUpdate {
-        test: bool
     }
 
     unsafe extern "C++" {
@@ -16,10 +13,15 @@ mod ffi {
         type GoogCcNetworkController;
         type NetworkAvailability;
         type NetworkControlUpdate;
+        type ProbeClusterConfig;
 
         fn new_goog_cc() -> UniquePtr<GoogCcNetworkController>;
 
-        fn OnNetworkAvailability(self: Pin<&mut GoogCcNetworkController>, msg: NetworkAvailability) -> NetworkControlUpdate;
+       // fn OnNetworkAvailability(self: Pin<&mut GoogCcNetworkController>, msg: NetworkAvailability) -> NetworkControlUpdate;
+
+        fn update_network_availability(controller: &UniquePtr<GoogCcNetworkController>, msg: NetworkAvailability);
+
+        
     }
 }
 
@@ -30,6 +32,9 @@ fn main() {
         network_available: true
     };
 
-    let network_control_update = goog_cc.as_mut().unwrap().OnNetworkAvailability(network_availability);
-    println!("NetworkControlUpdate: {:?}", network_control_update);
+    ffi::update_network_availability(&goog_cc, network_availability);
+
+   // let network_control_update = goog_cc.as_mut().unwrap().OnNetworkAvailability(network_availability);
+   
+    //println!("NetworkControlUpdate: {:?}", network_control_update.probe_cluster_configs.len());
 }
