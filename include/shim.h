@@ -6,9 +6,7 @@
 #include <goog_cc/goog_cc_network_control.h>
 #include <api/transport/network_control.h>
 
-namespace webrtc {
 
-std::unique_ptr<GoogCcNetworkController> new_goog_cc();
+std::unique_ptr<webrtc::GoogCcNetworkController> new_goog_cc();
 
-void update_network_availability(const std::unique_ptr<GoogCcNetworkController> &controller, NetworkAvailability msg);
-}
+void update_network_availability(const std::unique_ptr<webrtc::GoogCcNetworkController> &controller, webrtc::NetworkAvailability msg);

@@ -2,7 +2,7 @@
 
 #include "goog_cc-rs/include/shim.h"
 
-namespace webrtc {
+using namespace webrtc;
 
 const uint32_t kInitialBitrateKbps = 60;
 
@@ -30,8 +30,4 @@ void update_network_availability(const std::unique_ptr<GoogCcNetworkController> 
   std::cout << "update_network_availability:" << msg.network_available << std::endl;
   auto ret = controller->OnNetworkAvailability(msg);
   std::cout << "update_network_availability: " << ret.target_rate->target_rate.kbps() << std::endl;
-}
-
-
-
 }
