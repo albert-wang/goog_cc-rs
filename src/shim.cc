@@ -1,33 +1,42 @@
 #include <iostream>
 
-#include "goog_cc-rs/include/shim.h"
+#include "goog_cc-rs/src/main.rs.h" 
 
 using namespace webrtc;
 
-const uint32_t kInitialBitrateKbps = 60;
+namespace goog_cc_rs {
 
-NetworkControllerConfig InitialConfig(
-    int starting_bandwidth_kbps = kInitialBitrateKbps,
-    int min_data_rate_kbps = 0,
-    int max_data_rate_kbps = 5 * kInitialBitrateKbps) {
-  NetworkControllerConfig config(CreateEnvironment());
-  config.constraints.at_time = Timestamp::Zero();
-  config.constraints.min_data_rate = DataRate::KilobitsPerSec(min_data_rate_kbps);
-  config.constraints.max_data_rate = DataRate::KilobitsPerSec(max_data_rate_kbps);
-  config.constraints.starting_rate = DataRate::KilobitsPerSec(starting_bandwidth_kbps);
-  return config;
-}
+  const uint32_t kInitialBitrateKbps = 60;
 
-std::unique_ptr<GoogCcNetworkController> new_goog_cc() {
-  NetworkControllerConfig config = InitialConfig();
+  NetworkControllerConfig InitialConfig(
+      int starting_bandwidth_kbps = kInitialBitrateKbps,
+      int min_data_rate_kbps = 0,
+      int max_data_rate_kbps = 5 * kInitialBitrateKbps) {
+    NetworkControllerConfig config(CreateEnvironment());
+    config.constraints.at_time = Timestamp::Zero();
+    config.constraints.min_data_rate = DataRate::KilobitsPerSec(min_data_rate_kbps);
+    config.constraints.max_data_rate = DataRate::KilobitsPerSec(max_data_rate_kbps);
+    config.constraints.starting_rate = DataRate::KilobitsPerSec(starting_bandwidth_kbps);
+    return config;
+  }
 
-  GoogCcConfig goog_cc_config;
+  std::unique_ptr<GoogCcNetworkController> new_goog_cc() {
+    NetworkControllerConfig config = InitialConfig();
 
-  return std::unique_ptr<GoogCcNetworkController>(new GoogCcNetworkController(config, std::move(goog_cc_config)));
-}
+    GoogCcConfig goog_cc_config;
 
-void update_network_availability(const std::unique_ptr<GoogCcNetworkController> &controller, NetworkAvailability msg) {
-  std::cout << "update_network_availability:" << msg.network_available << std::endl;
-  auto ret = controller->OnNetworkAvailability(msg);
-  std::cout << "update_network_availability: " << ret.target_rate->target_rate.kbps() << std::endl;
+    return std::unique_ptr<GoogCcNetworkController>(new GoogCcNetworkController(config, std::move(goog_cc_config)));
+  }
+
+  goog_cc_rs::NetworkControlUpdate update_network_availability(const std::unique_ptr<GoogCcNetworkController> &controller, webrtc::NetworkAvailability msg) {
+    auto ret = controller->OnNetworkAvailability(msg);
+
+    return goog_cc_rs::NetworkControlUpdate {
+      target_rate: {
+        at_time: 0,
+        target_rate: ret.target_rate->target_rate.bps()
+      }
+    };
+  }
+
 }

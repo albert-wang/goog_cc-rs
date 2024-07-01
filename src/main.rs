@@ -1,18 +1,27 @@
-#[cxx::bridge]
+#[cxx::bridge(namespace="goog_cc_rs")]
 mod ffi {
-
     struct NetworkAvailability {
         network_available: bool
     }
 
+    #[derive(Debug)]
+    struct NetworkControlUpdate {
+        target_rate: TargetTransferRate
+    }
+
+    #[derive(Debug)]
+    struct TargetTransferRate {
+        at_time: u64,
+        target_rate: i64
+    }
+
     #[namespace = "webrtc"]
     unsafe extern "C++" {
-        include!("goog_cc-rs/include/types.h");
+        include!("goog_cc-rs/include/webrtc_types.h");
 
         type NetworkControllerConfig;
         type GoogCcNetworkController;
         type NetworkAvailability;
-        type NetworkControlUpdate;
         type ProbeClusterConfig;
     }
 
@@ -21,7 +30,7 @@ mod ffi {
 
         fn new_goog_cc() -> UniquePtr<GoogCcNetworkController>;
 
-        fn update_network_availability(controller: &UniquePtr<GoogCcNetworkController>, msg: NetworkAvailability);
+        fn update_network_availability(controller: &UniquePtr<GoogCcNetworkController>, msg: NetworkAvailability) -> NetworkControlUpdate;
     }
 }
 
@@ -32,5 +41,8 @@ fn main() {
         network_available: true
     };
 
-    ffi::update_network_availability(&goog_cc, network_availability);
+    let update = ffi::update_network_availability(&goog_cc, network_availability);
+
+    println!("{:?}", update);
 }
+
