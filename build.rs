@@ -92,6 +92,8 @@ fn main() {
         build.define("WEBRTC_POSIX", None);
     }
 
+    // Ingore a fairly spammy warnings
+    build.flag("-Wno-unused-parameter");
     build.std("c++17").compile("goog_cc-rs");
 
     println!("cargo:rerun-if-changed=src/main.rs");
